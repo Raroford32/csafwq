@@ -5,3 +5,4 @@ psutil==5.9.5
 gputil==1.4.0
 ray==2.5.1
 vllm==0.1.4
+ray

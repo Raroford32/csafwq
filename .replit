@@ -23,6 +23,10 @@ args = "Distributed LLM Inference"
 task = "workflow.run"
 args = "Check Ray"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Check Ray Environment"
+
 [[workflows.workflow]]
 name = "Run Distributed LLM Inference System"
 author = "agent"
@@ -58,5 +62,40 @@ agentRequireRestartOnSave = false
 task = "shell.exec"
 args = "python check_ray.py"
 
+[[workflows.workflow]]
+name = "Check Ray Environment"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "which python && python --version && pip list | grep ray && pip show ray"
+
 [deployment]
 run = ["sh", "-c", "python main.py"]
+
+[[ports]]
+localPort = 35883
+externalPort = 3001
+
+[[ports]]
+localPort = 55486
+externalPort = 6000
+
+[[ports]]
+localPort = 62823
+externalPort = 80
+
+[[ports]]
+localPort = 62898
+externalPort = 5000
+
+[[ports]]
+localPort = 63709
+externalPort = 3003
+
+[[ports]]
+localPort = 63763
+externalPort = 4200
