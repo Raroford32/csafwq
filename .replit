@@ -60,11 +60,3 @@ args = "python check_ray.py"
 
 [deployment]
 run = ["sh", "-c", "python main.py"]
-
-[[ports]]
-localPort = 35831
-externalPort = 3000
-
-[[ports]]
-localPort = 47323
-externalPort = 4200
