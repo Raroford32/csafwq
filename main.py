@@ -15,12 +15,14 @@ try:
     logger.info("Ray initialized successfully")
 except Exception as e:
     logger.error(f"Failed to initialize Ray: {str(e)}")
+    sys.exit(1)
 
 try:
     import vllm
     logger.info(f"vLLM successfully imported. Version: {vllm.__version__}")
 except ImportError as e:
     logger.error(f"Failed to import vLLM: {str(e)}")
+    sys.exit(1)
 
 import asyncio
 from distributed_inference import DistributedInferenceEngine
