@@ -15,8 +15,24 @@ author = "agent"
 task = "workflow.run"
 args = "Run Distributed LLM Inference System"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Distributed LLM Inference"
+
 [[workflows.workflow]]
 name = "Run Distributed LLM Inference System"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python main.py"
+waitForPort = 8000
+
+[[workflows.workflow]]
+name = "Distributed LLM Inference"
 author = "agent"
 
 [workflows.workflow.metadata]

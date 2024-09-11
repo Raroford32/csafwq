@@ -1,6 +1,6 @@
 class Config:
     def __init__(self):
-        self.model_name = "meta-llama/Llama-2-70b-chat-hf"  # Example model, replace with your chosen model
+        self.model_name = "facebook/opt-350m"  # Change to a smaller, publicly available model
         self.num_gpus = 8
         self.num_cpu_cores = 200
         self.total_ram = 1700  # in GB
