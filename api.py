@@ -1,53 +1,48 @@
+import requests
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import List
-import uvicorn
+from typing import List, Optional
 
 app = FastAPI()
 
-class GenerateRequest(BaseModel):
-    prompt: str
-    max_tokens: int = 100
-    temperature: float = 0.7
-    top_p: float = 0.95
+class ChatMessage(BaseModel):
+    role: str
+    content: str
 
-class BatchGenerateRequest(BaseModel):
-    prompts: List[str]
-    max_tokens: int = 100
-    temperature: float = 0.7
-    top_p: float = 0.95
+class ChatCompletionRequest(BaseModel):
+    model: str
+    messages: List[ChatMessage]
+    temperature: Optional[float] = 0.7
+    top_p: Optional[float] = 1.0
+    n: Optional[int] = 1
+    max_tokens: Optional[int] = None
+    stop: Optional[List[str]] = None
+    stream: Optional[bool] = False
 
-inference_engine = None
-
-@app.post("/generate")
-async def generate(request: GenerateRequest):
+@app.post("/v1/chat/completions")
+async def chat_completions(request: ChatCompletionRequest):
+    vllm_url = "http://localhost:8000/v1/completions"
+    
+    # Convert chat messages to a prompt
+    prompt = " ".join([f"{msg.role}: {msg.content}" for msg in request.messages])
+    
+    vllm_request = {
+        "prompt": prompt,
+        "temperature": request.temperature,
+        "top_p": request.top_p,
+        "n": request.n,
+        "max_tokens": request.max_tokens,
+        "stop": request.stop,
+        "stream": request.stream
+    }
+    
     try:
-        result = await inference_engine.generate(
-            request.prompt,
-            max_tokens=request.max_tokens,
-            temperature=request.temperature,
-            top_p=request.top_p
-        )
-        return {"generated_text": result}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        response = requests.post(vllm_url, json=vllm_request)
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException as e:
+        raise HTTPException(status_code=500, detail=f"Error communicating with vLLM server: {str(e)}")
 
-@app.post("/batch_generate")
-async def batch_generate(request: BatchGenerateRequest):
-    try:
-        results = await inference_engine.batch_generate(
-            request.prompts,
-            max_tokens=request.max_tokens,
-            temperature=request.temperature,
-            top_p=request.top_p
-        )
-        return {"generated_texts": results}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-async def start_api_server(inference_eng):
-    global inference_engine
-    inference_engine = inference_eng
-    config = uvicorn.Config(app, host="0.0.0.0", port=8000, loop="asyncio")
-    server = uvicorn.Server(config)
-    await server.serve()
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8080)

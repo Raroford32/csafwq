@@ -12,3 +12,4 @@ vllm
 torch
 transformers
 accelerate
+requests
