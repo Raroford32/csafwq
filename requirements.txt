@@ -6,3 +6,9 @@ gputil==1.4.0
 ray[default]
 ray[serve]
 vllm==0.1.4
+fastapi
+uvicorn
+vllm
+torch
+transformers
+accelerate
