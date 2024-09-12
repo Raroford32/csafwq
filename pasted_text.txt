@@ -1,0 +1,45 @@
+INFO:__main__:Ray version: 2.5.1
+INFO:__main__:Initializing Ray...
+2024-09-11 17:06:15,453 INFO worker.py:1636 -- Started a local Ray instance.
+INFO:__main__:Ray initialized successfully
+INFO:__main__:vLLM is installed. Location: /usr/local/lib/python3.10/dist-packages/vllm/__init__.py
+INFO:numexpr.utils:Note: detected 240 virtual cores but NumExpr set to maximum of 64, check "NUMEXPR_MAX_THREADS" environment variable.
+INFO:numexpr.utils:Note: NumExpr detected 240 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+INFO:numexpr.utils:NumExpr defaulting to 8 threads.
+INFO:__main__:vLLM version: 0.1.4
+INFO:__main__:Loading model...
+Loading model: /home/ubuntu/csafwq/csafwq/mlabonne_Hermes-3-Llama-3.1-70B-lorablated
+2024-09-11 17:06:22,354 INFO worker.py:1474 -- Calling ray.init() again after it has already been called.
+INFO 09-11 17:06:22 llm_engine.py:70] Initializing an LLM engine with config: model='/home/ubuntu/csafwq/csafwq/mlabonne_Hermes-3-Llama-3.1-70B-lorablated', tokenizer='/home/ubuntu/csafwq/csafwq/mlabonne_Hermes-3-Llama-3.1-70B-lorablated', tokenizer_mode=auto, trust_remote_code=False, dtype=torch.bfloat16, use_dummy_weights=False, download_dir=None, use_np_weights=False, tensor_parallel_size=2, seed=0)
+INFO 09-11 17:06:22 tokenizer.py:29] For some LLaMA-based models, initializing the fast tokenizer may take a long time. To eliminate the initialization time, consider using 'hf-internal-testing/llama-tokenizer' instead of the original tokenizer.
+/usr/local/lib/python3.10/dist-packages/xformers/ops/fmha/flash.py:211: FutureWarning: `torch.library.impl_abstract` was renamed to `torch.library.register_fake`. Please use that instead; we will remove `torch.library.impl_abstract` in a future version of PyTorch.
+  @torch.library.impl_abstract("xformers_flash::flash_fwd")
+/usr/local/lib/python3.10/dist-packages/xformers/ops/fmha/flash.py:344: FutureWarning: `torch.library.impl_abstract` was renamed to `torch.library.register_fake`. Please use that instead; we will remove `torch.library.impl_abstract` in a future version of PyTorch.
+  @torch.library.impl_abstract("xformers_flash::flash_bwd")
+ERROR:__main__:An error occurred in the main function: libcudart.so.11.0: cannot open shared object file: No such file or directory
+Traceback (most recent call last):
+  File "/home/ubuntu/gwssgv11/csafwq/main.py", line 51, in main
+    model = load_model(config)
+  File "/home/ubuntu/gwssgv11/csafwq/model_loader.py", line 5, in load_model
+    model = LLM(
+  File "/usr/local/lib/python3.10/dist-packages/vllm/entrypoints/llm.py", line 66, in __init__
+    self.llm_engine = LLMEngine.from_engine_args(engine_args)
+  File "/usr/local/lib/python3.10/dist-packages/vllm/engine/llm_engine.py", line 220, in from_engine_args
+    engine = cls(*engine_configs,
+  File "/usr/local/lib/python3.10/dist-packages/vllm/engine/llm_engine.py", line 99, in __init__
+    self._init_workers_ray(placement_group)
+  File "/usr/local/lib/python3.10/dist-packages/vllm/engine/llm_engine.py", line 141, in _init_workers_ray
+    from vllm.worker.worker import Worker  # pylint: disable=import-outside-toplevel
+  File "/usr/local/lib/python3.10/dist-packages/vllm/worker/worker.py", line 10, in <module>
+    from vllm.model_executor import get_model, InputMetadata, set_random_seed
+  File "/usr/local/lib/python3.10/dist-packages/vllm/model_executor/__init__.py", line 2, in <module>
+    from vllm.model_executor.model_loader import get_model
+  File "/usr/local/lib/python3.10/dist-packages/vllm/model_executor/model_loader.py", line 9, in <module>
+    from vllm.model_executor.models import *  # pylint: disable=wildcard-import
+  File "/usr/local/lib/python3.10/dist-packages/vllm/model_executor/models/__init__.py", line 1, in <module>
+    from vllm.model_executor.models.aquila import AquilaForCausalLM
+  File "/usr/local/lib/python3.10/dist-packages/vllm/model_executor/models/aquila.py", line 34, in <module>
+    from vllm.model_executor.layers.activation import SiluAndMul
+  File "/usr/local/lib/python3.10/dist-packages/vllm/model_executor/layers/activation.py", line 5, in <module>
+    from vllm import activation_ops
+ImportError: libcudart.so.11.0: cannot open shared object file: No such file or directory

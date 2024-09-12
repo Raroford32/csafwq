@@ -77,12 +77,16 @@ args = "which python && python --version && pip list | grep ray && pip show ray"
 run = ["sh", "-c", "python main.py"]
 
 [[ports]]
-localPort = 35883
+localPort = 46443
 externalPort = 3001
 
 [[ports]]
-localPort = 55486
+localPort = 57223
 externalPort = 6000
+
+[[ports]]
+localPort = 61578
+externalPort = 3000
 
 [[ports]]
 localPort = 62823
