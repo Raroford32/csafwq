@@ -2,6 +2,13 @@ import sys
 import logging
 import os
 import importlib.util
+import asyncio
+import time
+from distributed_inference import DistributedInferenceEngine
+from api import start_api_server
+from config import Config
+from model_loader import load_model
+from memory_manager import MemoryManager
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -17,14 +24,53 @@ if ray_spec is not None:
     logger.info(f"Ray is installed. Location: {ray_spec.origin}")
     import ray
     logger.info(f"Ray version: {ray.__version__}")
+    
+    # Print Ray configuration before initialization
+    logger.info("Ray configuration:")
+    for attr in dir(ray):
+        if not attr.startswith("_"):
+            try:
+                value = getattr(ray, attr)
+                if not callable(value):
+                    logger.info(f"  {attr}: {value}")
+            except Exception as e:
+                logger.warning(f"  Unable to get value for {attr}: {str(e)}")
+    
+    logger.info("Available system resources:")
+    import psutil
+    logger.info(f"  CPU cores: {psutil.cpu_count()}")
+    logger.info(f"  Total RAM: {psutil.virtual_memory().total / (1024**3):.2f} GB")
+    logger.info(f"  Available RAM: {psutil.virtual_memory().available / (1024**3):.2f} GB")
+    
+    try:
+        import GPUtil
+        gpus = GPUtil.getGPUs()
+        logger.info(f"  Number of GPUs: {len(gpus)}")
+        for i, gpu in enumerate(gpus):
+            logger.info(f"  GPU {i}: {gpu.name}, Memory: {gpu.memoryTotal} MB")
+    except ImportError:
+        logger.warning("GPUtil not installed, skipping GPU information")
+    
     logger.info("Initializing Ray...")
     try:
-        ray.init()
+        ray.init(ignore_reinit_error=True, logging_level=logging.DEBUG, log_to_driver=True, timeout=60)
         logger.info("Ray initialized successfully")
+        logger.info(f"Ray resources after initialization: {ray.available_resources()}")
     except Exception as e:
         logger.error(f"Failed to initialize Ray: {str(e)}")
+        logger.error(f"Ray configuration after failed initialization:")
+        for attr in dir(ray):
+            if not attr.startswith("_"):
+                try:
+                    value = getattr(ray, attr)
+                    if not callable(value):
+                        logger.error(f"  {attr}: {value}")
+                except Exception as e:
+                    logger.warning(f"  Unable to get value for {attr}: {str(e)}")
+        sys.exit(1)  # Exit if Ray initialization fails
 else:
     logger.error("Ray is not installed or not found in the Python path")
+    sys.exit(1)  # Exit if Ray is not installed
 
 # Check vLLM installation
 vllm_spec = importlib.util.find_spec("vllm")
@@ -34,13 +80,7 @@ if vllm_spec is not None:
     logger.info(f"vLLM version: {vllm.__version__}")
 else:
     logger.error("vLLM is not installed or not found in the Python path")
-
-import asyncio
-from distributed_inference import DistributedInferenceEngine
-from api import start_api_server
-from config import Config
-from model_loader import load_model
-from memory_manager import MemoryManager
+    sys.exit(1)  # Exit if vLLM is not installed
 
 async def main():
     try:
@@ -57,6 +97,14 @@ async def main():
         await start_api_server(inference_engine)
     except Exception as e:
         logger.exception(f"An error occurred in the main function: {str(e)}")
+        sys.exit(1)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    start_time = time.time()
+    try:
+        asyncio.run(main())
+    except Exception as e:
+        logger.exception(f"An unexpected error occurred: {str(e)}")
+    finally:
+        end_time = time.time()
+        logger.info(f"Total execution time: {end_time - start_time:.2f} seconds")
