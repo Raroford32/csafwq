@@ -1,13 +1,36 @@
-2024-09-12 10:13:03,060 - DEBUG - Using selector: EpollSelector
-2024-09-12 10:13:03,061 - INFO - Starting main function
-2024-09-12 10:13:03,061 - INFO - Creating Config instance...
-2024-09-12 10:13:03,061 - INFO - Config instance created successfully
-2024-09-12 10:13:03,061 - INFO - Initializing CPU inference engine...
-2024-09-12 10:13:03,066 - DEBUG - Starting new HTTPS connection (1): huggingface.co:443
-2024-09-12 10:13:03,225 - DEBUG - https://huggingface.co:443 "HEAD /mlabonne/Hermes-3-Llama-3.1-70B-lorablated/resolve/main/tokenizer_config.json HTTP/11" 200 0
-2024-09-12 10:13:03,676 - DEBUG - https://huggingface.co:443 "HEAD /mlabonne/Hermes-3-Llama-3.1-70B-lorablated/resolve/main/config.json HTTP/11" 200 0
-2024-09-12 10:13:04,280 - DEBUG - https://huggingface.co:443 "HEAD /mlabonne/Hermes-3-Llama-3.1-70B-lorablated/resolve/main/model-00001-of-00030.safetensors HTTP/11" 302 0
-2024-09-12 10:13:04,296 - DEBUG - Attempting to acquire lock 132196246978128 on /home/runner/vLLM-DistributedInferences/.cache/huggingface/hub/.locks/models--mlabonne--Hermes-3-Llama-3.1-70B-lorablated/87d036564df75be07e189616bc464f6229c7abb605bce1a4d69e459b322032a0.lock
-2024-09-12 10:13:04,297 - DEBUG - Lock 132196246978128 acquired on /home/runner/vLLM-DistributedInferences/.cache/huggingface/hub/.locks/models--mlabonne--Hermes-3-Llama-3.1-70B-lorablated/87d036564df75be07e189616bc464f6229c7abb605bce1a4d69e459b322032a0.lock
-2024-09-12 10:13:04,303 - DEBUG - Starting new HTTPS connection (1): cdn-lfs-us-1.huggingface.co:443
-2024-09-12 10:13:04,624 - DEBUG - https://cdn-lfs-us-1.huggingface.co:443 "GET /repos/59/52/59523a10e92380ac9c7ca32896b63ed09df674c92f1bff3b79fcb25628f7882b/87d036564df75be07e189616bc464f6229c7abb605bce1a4d69e459b322032a0?response-content-disposition=inline%3B+filename*%3DUTF-8%27%27model-00001-of-00030.safetensors%3B+filename%3D%22model-00001-of-00030.safetensors%22%3B&Expires=1726395184&Policy=eyJTdGF0ZW1lbnQiOlt7IkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTcyNjM5NTE4NH19LCJSZXNvdXJjZSI6Imh0dHBzOi8vY2RuLWxmcy11cy0xLmh1Z2dpbmdmYWNlLmNvL3JlcG9zLzU5LzUyLzU5NTIzYTEwZTkyMzgwYWM5YzdjYTMyODk2YjYzZWQwOWRmNjc0YzkyZjFiZmYzYjc5ZmNiMjU2MjhmNzg4MmIvODdkMDM2NTY0ZGY3NWJlMDdlMTg5NjE2YmM0NjRmNjIyOWM3YWJiNjA1YmNlMWE0ZDY5ZTQ1OWIzMjIwMzJhMD9yZXNwb25zZS1jb250ZW50LWRpc3Bvc2l0aW9uPSoifV19&Signature=JtnrZ-0smBkieFEHJtkze6m-kYQ~-kmv07BQHof056JQexc2IQYsORcNXOv9QU0FIOp8yK1yjvULb1iz8nd5K3xcl27v7H51aabQQAN79DUkqh1lO~Dtp1RBSW8SncLF~Fl97GG-t6ngBdMAmNAd6YjAVBp9dTsE36HmEvkLKVfOYvGt~owLyXr2~M0PsEe5n5j4IftA2nJcsJ9Io5X8DFJAzfTeY4KWQ19UlT5lCue9e6-FJRe00Zu278GvWtrwFq1nUfxTT8yT8XUpbgop9nNzM3EdBZhOtzG2n5~OuuTAXf3L2WuAUAjTaSeQBbWX5v61Cun9OnmNb0FofCWCUA__&Key-Pair-Id=K24J24Z295AEI9 HTTP/11" 206 876626384
+Script execution started
+Logging configured
+Starting asyncio.run(main())
+Starting main function
+Creating Config instance...
+Config instance created successfully
+Initializing MemoryManager...
+MemoryManager initialized successfully
+Loading model...
+An error occurred in the main function: EngineArgs.__init__() got an unexpected keyword argument 'load_format'
+Total execution time: 0.00 seconds
+NFO - MemoryManager initialized successfully
+2024-09-12 10:16:04,653 - INFO - Loading model...
+2024-09-12 10:16:04,653 - INFO - Loading model from directory: mlabonne/Hermes-3-Llama-3.1-70B-lorablated
+2024-09-12 10:16:04,653 - ERROR - Error loading model: EngineArgs.__init__() got an unexpected keyword argument 'load_format'
+Traceback (most recent call last):
+  File "/home/runner/vLLM-DistributedInferences/model_loader.py", line 12, in load_model
+    model = LLM(
+            ^^^^
+  File "/home/runner/vLLM-DistributedInferences/.pythonlibs/lib/python3.11/site-packages/vllm/entrypoints/llm.py", line 56, in __init__
+    engine_args = EngineArgs(
+                  ^^^^^^^^^^^
+TypeError: EngineArgs.__init__() got an unexpected keyword argument 'load_format'
+2024-09-12 10:16:04,654 - ERROR - An error occurred in the main function: EngineArgs.__init__() got an unexpected keyword argument 'load_format'
+Traceback (most recent call last):
+  File "/home/runner/vLLM-DistributedInferences/main.py", line 36, in main
+    model = load_model(config)
+            ^^^^^^^^^^^^^^^^^^
+  File "/home/runner/vLLM-DistributedInferences/model_loader.py", line 12, in load_model
+    model = LLM(
+            ^^^^
+  File "/home/runner/vLLM-DistributedInferences/.pythonlibs/lib/python3.11/site-packages/vllm/entrypoints/llm.py", line 56, in __init__
+    engine_args = EngineArgs(
+                  ^^^^^^^^^^^
+TypeError: EngineArgs.__init__() got an unexpected keyword argument 'load_format'
+2024-09-12 10:16:04,655 - INFO - Total execution time: 0.00 seconds

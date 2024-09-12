@@ -1,67 +1,72 @@
 import logging
 import asyncio
 import time
-from transformers import AutoTokenizer, AutoModelForCausalLM
 from config import Config
+from model_loader import load_model
+from distributed_inference import DistributedInferenceEngine
+from memory_manager import MemoryManager
+
+print("Script execution started")
 
 logging.basicConfig(level=logging.DEBUG, filename='main_debug.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-class CPUInferenceEngine:
-    def __init__(self, model_name):
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        self.model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto")
-
-    async def generate(self, prompt, max_tokens=100, temperature=0.7, top_p=0.95):
-        inputs = self.tokenizer(prompt, return_tensors="pt")
-        outputs = self.model.generate(
-            **inputs,
-            max_new_tokens=max_tokens,
-            temperature=temperature,
-            top_p=top_p,
-            do_sample=True
-        )
-        return self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-    async def batch_generate(self, prompts, max_tokens=100, temperature=0.7, top_p=0.95):
-        results = []
-        for prompt in prompts:
-            result = await self.generate(prompt, max_tokens, temperature, top_p)
-            results.append(result)
-        return results
+print("Logging configured")
+logger.info("Logging configured")
 
 async def main():
     try:
+        print("Starting main function")
         logger.info("Starting main function")
+        
+        print("Creating Config instance...")
         logger.info("Creating Config instance...")
         config = Config()
+        print("Config instance created successfully")
         logger.info("Config instance created successfully")
 
-        logger.info("Initializing CPU inference engine...")
-        inference_engine = CPUInferenceEngine(config.model_name)
-        logger.info("CPU inference engine initialized successfully")
+        print("Initializing MemoryManager...")
+        logger.info("Initializing MemoryManager...")
+        memory_manager = MemoryManager(config.total_ram_gb)
+        print("MemoryManager initialized successfully")
+        logger.info("MemoryManager initialized successfully")
+
+        print("Loading model...")
+        logger.info("Loading model...")
+        model = load_model(config)
+        print("Model loaded successfully")
+        logger.info("Model loaded successfully")
+
+        print("Initializing DistributedInferenceEngine...")
+        logger.info("Initializing DistributedInferenceEngine...")
+        inference_engine = DistributedInferenceEngine(model, config)
+        print("DistributedInferenceEngine initialized successfully")
+        logger.info("DistributedInferenceEngine initialized successfully")
 
         # Test the inference engine
-        test_prompts = [
-            "Explain the concept of distributed computing in one sentence:",
-            "What are the benefits of using multiple CPUs for inference?",
-            "How does Hugging Face Transformers help with large language model inference?"
-        ]
-        logger.info(f"Generating responses for {len(test_prompts)} test prompts")
-        responses = await inference_engine.batch_generate(test_prompts)
-        for prompt, response in zip(test_prompts, responses):
-            logger.info(f"Prompt: {prompt}")
-            logger.info(f"Response: {response}")
+        test_prompt = "Explain the concept of distributed computing in one sentence:"
+        print(f"Testing inference engine with prompt: {test_prompt}")
+        logger.info(f"Testing inference engine with prompt: {test_prompt}")
+        response = await inference_engine.generate(test_prompt)
+        print(f"Generated response: {response}")
+        logger.info(f"Generated response: {response}")
+
+        print("Initialization complete")
+        logger.info("Initialization complete")
 
     except Exception as e:
+        print(f"An error occurred in the main function: {str(e)}")
         logger.exception(f"An error occurred in the main function: {str(e)}")
 
 if __name__ == "__main__":
     start_time = time.time()
     try:
+        print("Starting asyncio.run(main())")
         asyncio.run(main())
     except Exception as e:
+        print(f"An unexpected error occurred: {str(e)}")
         logger.exception(f"An unexpected error occurred: {str(e)}")
     finally:
         end_time = time.time()
+        print(f"Total execution time: {end_time - start_time:.2f} seconds")
         logger.info(f"Total execution time: {end_time - start_time:.2f} seconds")
