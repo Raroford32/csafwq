@@ -10,7 +10,7 @@ from config import Config
 from model_loader import load_model
 from memory_manager import MemoryManager
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 logger.info(f"Python version: {sys.version}")
@@ -53,12 +53,12 @@ if ray_spec is not None:
     
     logger.info("Initializing Ray...")
     try:
-        ray.init(ignore_reinit_error=True, logging_level=logging.DEBUG, log_to_driver=True, timeout=60)
+        ray.init(ignore_reinit_error=True, logging_level=logging.DEBUG, log_to_driver=True)
         logger.info("Ray initialized successfully")
         logger.info(f"Ray resources after initialization: {ray.available_resources()}")
     except Exception as e:
         logger.error(f"Failed to initialize Ray: {str(e)}")
-        logger.error(f"Ray configuration after failed initialization:")
+        logger.error("Ray configuration after failed initialization:")
         for attr in dir(ray):
             if not attr.startswith("_"):
                 try:
@@ -67,6 +67,25 @@ if ray_spec is not None:
                         logger.error(f"  {attr}: {value}")
                 except Exception as e:
                     logger.warning(f"  Unable to get value for {attr}: {str(e)}")
+        
+        # Additional error information
+        logger.error("Ray initialization error details:")
+        logger.error(f"Ray version: {ray.__version__}")
+        logger.error(f"Python version: {sys.version}")
+        logger.error(f"Operating system: {os.name}")
+        logger.error(f"Platform: {sys.platform}")
+        logger.error(f"Current working directory: {os.getcwd()}")
+        logger.error(f"PYTHONPATH: {os.environ.get('PYTHONPATH', 'Not set')}")
+        
+        # Check for Ray-specific environment variables
+        ray_env_vars = [var for var in os.environ if var.startswith('RAY_')]
+        if ray_env_vars:
+            logger.error("Ray-specific environment variables:")
+            for var in ray_env_vars:
+                logger.error(f"  {var}: {os.environ[var]}")
+        else:
+            logger.error("No Ray-specific environment variables found")
+        
         sys.exit(1)  # Exit if Ray initialization fails
 else:
     logger.error("Ray is not installed or not found in the Python path")

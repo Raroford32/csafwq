@@ -1,7 +1,7 @@
 class Config:
 
     def __init__(self):
-        self.model_name = "mlabonne_Hermes-3-Llama-3.1-70B-lorablated"
+        self.model_name = "/home/ubuntu/gwssgv11/csafwq/mlabonne_Hermes-3-Llama-3.1-70B-lorablated"
         self.num_gpus = 8
         self.num_cpu_cores = 200
         self.total_ram = 1700  # in GB
